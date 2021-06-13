@@ -19,6 +19,10 @@ loc_A, loc_B = 'A', 'B'
 
 class vaccumEnvironemt(Object):
 
+    # status = {
+    #     loc_A: random.choice(['Clean', 'Dirty']),
+    #     loc_B: random.choice(['Clean', 'Dirty'])
+    # }
 
     def __init__(self):
         self.status = {
@@ -37,10 +41,10 @@ class vaccumEnvironemt(Object):
 
     def execute_action(self, agent, action):
         # if
-        if action == 'Left':
-            agent.location = loc_A
-        elif action == 'Right':
+        if action == 'Right':
             agent.location = loc_B
+        elif action == 'Left':
+            agent.location = loc_A
         elif action == 'Suck':
             self.status[agent.location] = 'Clean'
 
@@ -52,17 +56,17 @@ class simpleReflexVacuumAgent(Agent):
         Agent.__init__(self)
 
         def program(percept):
-             
-             ## ADD YOUR OWN CODE HERE
+
             action = rules.get(tuple(percept))
 
-            print("Agent Has Perceived: ", percept, " And Performed Action: ", action)
+            print("Agent Has Perceived: ", percept,
+                  " And Performed Action: ", action)
             return action
 
         self.program = program
 
-## WRITE YOUR OWN CODE HERE
-class modelReflexVacuumAgent(Agent):
+
+class simpleModelReflexVacuumAgent(Agent):
 
     def __init__(self, rules):
 
@@ -80,28 +84,29 @@ class modelReflexVacuumAgent(Agent):
             else:
                 action = rules.get(tuple(percept))
 
-            print("Agent Has Perceived: ", percept, " And Performed Action: ", action)
+            print("Agent Has Perceived: ", percept,
+                  " And Performed Action: ", action)
             return action
 
         self.program = program
 
 
-def rulesSet():
+def getRules():
     rules = {
         ('A', 'Clean'): 'Right',
         ('A', 'Dirty'): 'Suck',
         ('B', 'Clean'): 'Left',
         ('B', 'Dirty'): 'Suck',
     }
-    return modelReflexVacuumAgent(rules)
+    return simpleModelReflexVacuumAgent(rules)
 
 
 # WRITE YOUR OWN CODE HERE
 
 
-reflexAgent = rulesSet()
-environment = vaccumEnvironemt()
-environment.add_object(reflexAgent)
+rAgent = getRules()
+env = vaccumEnvironemt()
+env.add_object(rAgent)
 for x in range(20):
-    action = reflexAgent.program(environment.percept(reflexAgent))
-    environment.execute_action(reflexAgent, action)
+    action = rAgent.program(env.percept(rAgent))
+    env.execute_action(rAgent, action)
